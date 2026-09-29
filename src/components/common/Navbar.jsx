@@ -1,4 +1,6 @@
 import { NavLink } from 'react-router-dom'
+import { useAuth } from '../../hooks/useAuth.jsx'
+import { TaxiIcon } from './Icons'
 
 const links = [
   { to: '/', label: 'Accueil' },
@@ -7,12 +9,14 @@ const links = [
 ]
 
 export default function Navbar() {
+  const { admin } = useAuth()
+
   return (
     <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
         <NavLink to="/" className="flex items-center gap-2 text-lg font-extrabold text-ink-900">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-600 text-white">
-            
+            <TaxiIcon className="h-5 w-5" />
           </span>
           TaxiGo
         </NavLink>
@@ -34,12 +38,30 @@ export default function Navbar() {
           ))}
         </div>
 
-        <NavLink
-          to="/reservation"
-          className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700"
-        >
-          Réserver un taxi
-        </NavLink>
+        <div className="flex items-center gap-2">
+          {admin ? (
+            <NavLink
+              to="/admin"
+              className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-ink-700 hover:bg-slate-100 transition"
+            >
+              Espace admin
+            </NavLink>
+          ) : (
+            <NavLink
+              to="/admin/connexion"
+              className="rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-ink-700 hover:bg-slate-100 transition"
+            >
+              Se connecter
+            </NavLink>
+          )}
+
+          <NavLink
+            to="/reservation"
+            className="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand-700 transition"
+          >
+            Réserver un taxi
+          </NavLink>
+        </div>
       </nav>
 
       <div className="flex gap-1 overflow-x-auto border-t border-slate-100 px-4 py-1.5 sm:hidden">
@@ -57,6 +79,29 @@ export default function Navbar() {
             {link.label}
           </NavLink>
         ))}
+        {admin ? (
+          <NavLink
+            to="/admin"
+            className={({ isActive }) =>
+              `shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium ${
+                isActive ? 'bg-brand-50 text-brand-700' : 'text-ink-600'
+              }`
+            }
+          >
+            Espace admin
+          </NavLink>
+        ) : (
+          <NavLink
+            to="/admin/connexion"
+            className={({ isActive }) =>
+              `shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium ${
+                isActive ? 'bg-brand-50 text-brand-700' : 'text-ink-600'
+              }`
+            }
+          >
+            Se connecter
+          </NavLink>
+        )}
       </div>
     </header>
   )

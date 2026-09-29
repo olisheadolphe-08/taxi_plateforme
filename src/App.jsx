@@ -27,6 +27,7 @@ export default function App() {
       </Route>
 
       <Route path="/admin/connexion" element={<Login />} />
+      <Route path="/admin/login" element={<Login />} />
 
       <Route
         path="/admin"

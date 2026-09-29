@@ -49,6 +49,12 @@ export default function Home() {
             >
               Suivre une réservation
             </Link>
+            <Link
+              to="/admin/connexion"
+              className="rounded-lg border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur hover:bg-white/20 transition"
+            >
+              Se connecter
+            </Link>
           </div>
         </div>
       </section>
