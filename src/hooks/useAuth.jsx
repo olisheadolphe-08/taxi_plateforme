@@ -1,7 +1,12 @@
 import { createContext, useContext, useEffect, useState } from 'react'
-import { api } from '../services/api'
+import { api, ApiError } from '../services/api'
 
 const AuthContext = createContext(null)
+
+/** Vérifie sommairement qu'un token JWT a la forme attendue (3 segments base64). */
+function isTokenWellFormed(token) {
+  return typeof token === 'string' && token.split('.').length === 3
+}
 
 export function AuthProvider({ children }) {
   const [admin, setAdmin] = useState(null)
@@ -9,7 +14,11 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     const token = localStorage.getItem('taxi_admin_token')
-    if (!token) {
+
+    if (!token || !isTokenWellFormed(token)) {
+      // Pas de token ou token manifestement invalide : nettoyage immédiat,
+      // aucun appel réseau, aucun 401 en console.
+      if (token) localStorage.removeItem('taxi_admin_token')
       setLoading(false)
       return
     }
@@ -17,8 +26,11 @@ export function AuthProvider({ children }) {
     api
       .me()
       .then((res) => setAdmin(res.data))
-      .catch(() => {
-        localStorage.removeItem('taxi_admin_token')
+      .catch((err) => {
+        // Token expiré / révoqué côté serveur → nettoyage silencieux
+        if (err instanceof ApiError && err.status === 401) {
+          localStorage.removeItem('taxi_admin_token')
+        }
       })
       .finally(() => setLoading(false))
   }, [])
